@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using EntityFramework_lesson;
+using Microsoft.EntityFrameworkCore;
 
 public class Phone
 {
@@ -25,7 +26,7 @@ public class ApplicationDbContext : DbContext
 
 public class Program
 {
-    public static void Main()
+    public static void Main1()
     {
         var phone = new Phone()
         {
@@ -36,5 +37,15 @@ public class Program
         using var dbContext = new ApplicationDbContext();
         dbContext.Phones.Add(phone);
         dbContext.SaveChanges();
+    }
+
+    public static void Main()
+    {
+        using var dbContext = new DevicesContext();
+
+        foreach (var phone in dbContext.Phones)
+        {
+            Console.WriteLine(phone.Name);
+        }
     }
 }
