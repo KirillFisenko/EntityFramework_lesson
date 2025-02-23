@@ -1,5 +1,4 @@
-﻿using EntityFramework_lesson;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 public class Phone
 {
@@ -14,6 +13,7 @@ public class ApplicationDbContext : DbContext
 
     public ApplicationDbContext()
     {
+        Database.EnsureDeleted();
         Database.EnsureCreated();
     }
 
@@ -41,7 +41,7 @@ public class Program
 
     public static void Main()
     {
-        using var dbContext = new DevicesContext();
+        using var dbContext = new ApplicationDbContext();
 
         foreach (var phone in dbContext.Phones)
         {
