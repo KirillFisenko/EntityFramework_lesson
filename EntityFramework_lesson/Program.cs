@@ -39,15 +39,14 @@ public class Program
 {
     public static void Main()
     {
-        var builder = new ConfigurationBuilder();
-        builder.SetBasePath(Directory.GetCurrentDirectory());
-        builder.AddJsonFile("appsettings.json");
-        var config = builder.Build();
+        var config = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json").Build();
 
         var connectionString = config.GetConnectionString("DefaultConnection");
-
-        var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
-        var options = optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)).Options;
+        var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+            .UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
+            .Options;
 
         var phone = new Phone()
         {
