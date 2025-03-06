@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
-public class PhoneEntity
+public class Phone
 {
     public int Id { get; set; }
     public string Name { get; set; }
@@ -10,7 +10,7 @@ public class PhoneEntity
 
 public class ApplicationDbContext1 : DbContext
 {
-    public DbSet<PhoneEntity> Phones { get; set; }
+    public DbSet<Phone> Phones { get; set; }
 
     public ApplicationDbContext1()
     {
@@ -27,7 +27,7 @@ public class ApplicationDbContext1 : DbContext
 
 public class ApplicationDbContext : DbContext
 {
-    public DbSet<PhoneEntity> Phones { get; set; }
+    public DbSet<Phone> Phones { get; set; }
 
     public ApplicationDbContext()
     {
@@ -50,7 +50,7 @@ public class Program
 {
     public static void Main()
     {
-        var phone = new PhoneEntity()
+        var phone = new Phone()
         {
             Name = "Xiaomi Poco F4",
             Price = 25000
