@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
-public class Phone
+public class PhoneEntity
 {
     public int Id { get; set; }
     public string Name { get; set; }
@@ -10,7 +10,7 @@ public class Phone
 
 public class ApplicationDbContext1 : DbContext
 {
-    public DbSet<Phone> Phones { get; set; }
+    public DbSet<PhoneEntity> Phones { get; set; }
 
     public ApplicationDbContext1()
     {
@@ -27,11 +27,22 @@ public class ApplicationDbContext1 : DbContext
 
 public class ApplicationDbContext : DbContext
 {
-    public DbSet<Phone> Phones { get; set; }
+    public DbSet<PhoneEntity> Phones { get; set; }
 
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+    public ApplicationDbContext()
     {
+        Database.EnsureDeleted();
         Database.EnsureCreated();
+    }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        var config = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json").Build();
+
+        var connectionString = config.GetConnectionString("DefaultConnection");
+        optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
     }
 }
 
@@ -39,22 +50,13 @@ public class Program
 {
     public static void Main()
     {
-        var config = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json").Build();
-
-        var connectionString = config.GetConnectionString("DefaultConnection");
-        var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-            .UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
-            .Options;
-
-        var phone = new Phone()
+        var phone = new PhoneEntity()
         {
             Name = "Xiaomi Poco F4",
             Price = 25000
         };
 
-        using var dbContext = new ApplicationDbContext(options);
+        using var dbContext = new ApplicationDbContext();
         dbContext.Phones.Add(phone);
         dbContext.SaveChanges();
     }
