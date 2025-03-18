@@ -21,8 +21,8 @@ public class ApplicationDbContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         var config = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json").Build();
+            .AddJsonFile("appsettings.json")
+            .Build();
 
         var connectionString = config.GetConnectionString("DefaultConnection");
         optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
@@ -82,9 +82,9 @@ public class Program
             Console.WriteLine($"{phone2.Name} - {phone2.Price}");
         }
 
-        var phone3 = new Phone { Id = 1 };
-        dbContext.Phones.Remove(phone3);
-        dbContext.SaveChanges();
+        //var phone3 = new Phone { Id = 1 };
+        //dbContext.Phones.Remove(phone3);
+        //dbContext.SaveChanges();
 
         var phone4 = dbContext.Phones.Find(1);
         if (phone4 != null)
