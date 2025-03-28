@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 public class Phone
 {
@@ -13,7 +14,11 @@ public class ApplicationDbContext : DbContext
 {
     public DbSet<Phone> Phones { get; set; }
 
-    public ApplicationDbContext() { }
+    public ApplicationDbContext()
+    {
+        Database.EnsureDeleted();
+        Database.EnsureCreated();
+    }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -22,7 +27,8 @@ public class ApplicationDbContext : DbContext
             .Build();
 
         var connectionString = config.GetConnectionString("DefaultConnection");
-        optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+        optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
+                      .LogTo(Console.WriteLine, LogLevel.Information);
     }
 }
 
@@ -31,7 +37,5 @@ public class Program
     public static void Main()
     {
         using var dbContext = new ApplicationDbContext();
-
-        dbContext.Database.Migrate(); // автоприменение миграций при запуске
     }
 }
