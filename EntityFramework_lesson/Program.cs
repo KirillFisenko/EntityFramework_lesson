@@ -10,6 +10,12 @@ public class Phone
     public string? Description { get; set; }
 }
 
+public class Storage
+{
+    public int Id { get; set; }
+    public int SizeGB { get; set; }
+}
+
 public class ApplicationDbContext : DbContext
 {
     public DbSet<Phone> Phones { get; set; }
