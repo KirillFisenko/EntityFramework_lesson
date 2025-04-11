@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using System.ComponentModel.DataAnnotations.Schema;
 
 public class Phone
 {
@@ -8,21 +9,21 @@ public class Phone
     public string Name { get; set; }
     public decimal Price { get; set; }
 
-    public Storage Storage { get; set; } // Навигационное свойство
+    public Guarantee Guarantee { get; set; } // Навигационное свойство
 }
 
-public class Storage
+public class Guarantee
 {
+    [ForeignKey(nameof(Phone))] // Ключ гарантии = внешний ключ к телефону
     public int Id { get; set; }
-    public int SizeGB { get; set; }
+    public int Months { get; set; }
 
-    public List<Phone> Phones { get; set; } // Навигационное свойство 
+    public Phone Phone { get; set; } // Навигационное свойство
 }
 
 public class ApplicationDbContext : DbContext
 {
     public DbSet<Phone> Phones { get; set; }
-
     public ApplicationDbContext()
     {
         Database.EnsureDeleted();
@@ -47,16 +48,27 @@ public class Program
     {
         using var dbContext = new ApplicationDbContext();
 
-        // Создадим два вида памяти
-        var storage64 = new Storage { SizeGB = 64 };
-        var storage128 = new Storage { SizeGB = 128 };
+        var phone1 = new Phone
+        {
+            Name = "Phone A",
+            Price = 299.99m,
+            Guarantee = new Guarantee
+            {
+                Months = 12
+            }
+        };
 
-        // Создадим три телефона с разной памятью
-        var phone1 = new Phone { Name = "Phone A", Price = 100, Storage = storage64 };
-        var phone2 = new Phone { Name = "Phone B", Price = 150, Storage = storage64 };
-        var phone3 = new Phone { Name = "Phone C", Price = 200, Storage = storage128 };
+        var phone2 = new Phone
+        {
+            Name = "Phone B",
+            Price = 499.99m,
+            Guarantee = new Guarantee
+            {
+                Months = 24
+            }
+        };
 
-        dbContext.AddRange(phone1, phone2, phone3);
+        dbContext.AddRange(phone1, phone2);
         dbContext.SaveChanges();
     }
 }
