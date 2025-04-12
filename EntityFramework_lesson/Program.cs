@@ -9,21 +9,51 @@ public class Phone
     public string Name { get; set; }
     public decimal Price { get; set; }
 
+    // One-to-One
     public Guarantee Guarantee { get; set; } // Навигационное свойство
+
+    // One-to-Many
+    public Storage Storage { get; set; } // Навигационное свойство   
+
+    // Many-to-Many
+    public List<App> Apps { get; set; } // Навигационное свойство
 }
 
 public class Guarantee
 {
-    [ForeignKey(nameof(Phone))] // Ключ гарантии = внешний ключ к телефону
+    [ForeignKey(nameof(Phone))]
     public int Id { get; set; }
     public int Months { get; set; }
 
+    // One-to-One
     public Phone Phone { get; set; } // Навигационное свойство
+}
+
+public class Storage
+{
+    public int Id { get; set; }
+    public int SizeGB { get; set; }
+
+    // One-to-Many
+    public List<Phone> Phones { get; set; } // Навигационное свойство
+}
+
+public class App
+{
+    public int Id { get; set; }
+    public string Title { get; set; }
+
+    // Many-to-Many
+    public List<Phone> Phones { get; set; } // Навигационное свойство
 }
 
 public class ApplicationDbContext : DbContext
 {
     public DbSet<Phone> Phones { get; set; }
+    public DbSet<Guarantee> Guarantees { get; set; }
+    public DbSet<Storage> Storages { get; set; }
+    public DbSet<App> Apps { get; set; }
+
     public ApplicationDbContext()
     {
         Database.EnsureDeleted();
@@ -48,27 +78,20 @@ public class Program
     {
         using var dbContext = new ApplicationDbContext();
 
-        var phone1 = new Phone
+        var storage64 = new Storage { SizeGB = 64 };
+        var app1 = new App { Title = "Chat" };
+        var app2 = new App { Title = "Maps" };
+
+        var phone = new Phone
         {
-            Name = "Phone A",
-            Price = 299.99m,
-            Guarantee = new Guarantee
-            {
-                Months = 12
-            }
+            Name = "iPhone 666",
+            Price = 777,
+            Storage = storage64,
+            Guarantee = new Guarantee { Months = 12 },
+            Apps = [app1, app2]
         };
 
-        var phone2 = new Phone
-        {
-            Name = "Phone B",
-            Price = 499.99m,
-            Guarantee = new Guarantee
-            {
-                Months = 24
-            }
-        };
-
-        dbContext.AddRange(phone1, phone2);
+        dbContext.Add(phone);
         dbContext.SaveChanges();
     }
 }
