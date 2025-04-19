@@ -23,7 +23,7 @@ public class Phone
 public class Guarantee
 {
     [Key, ForeignKey(nameof(Phone))]
-    public int PhoneId { get; set; } // И первичный, и внешний ключ
+    public int PhoneId { get; set; }
     public int Months { get; set; }
 }
 
@@ -52,12 +52,6 @@ public class ApplicationDbContext : DbContext
     public DbSet<Storage> Storages { get; set; }
     public DbSet<App> Apps { get; set; }
 
-    public ApplicationDbContext()
-    {
-        Database.EnsureDeleted();
-        Database.EnsureCreated();
-    }
-
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         var config = new ConfigurationBuilder()
@@ -75,21 +69,6 @@ public class Program
     public static void Main()
     {
         using var dbContext = new ApplicationDbContext();
-
-        var storage64 = new Storage { SizeGB = 64 };
-        var app1 = new App { Title = "Chat" };
-        var app2 = new App { Title = "Maps" };
-
-        var phone = new Phone
-        {
-            Name = "iPhone 666",
-            Price = 777,
-            Storage = storage64,
-            Guarantee = new Guarantee { Months = 12 },
-            Apps = [app1, app2]
-        };
-
-        dbContext.Add(phone);
-        dbContext.SaveChanges();
+        dbContext.Database.Migrate();
     }
 }
