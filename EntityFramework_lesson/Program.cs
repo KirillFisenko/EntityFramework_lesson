@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 public class Phone
@@ -21,12 +22,9 @@ public class Phone
 
 public class Guarantee
 {
-    [ForeignKey(nameof(Phone))]
-    public int Id { get; set; }
+    [Key, ForeignKey(nameof(Phone))]
+    public int PhoneId { get; set; } // И первичный, и внешний ключ
     public int Months { get; set; }
-
-    // One-to-One
-    public Phone Phone { get; set; } // Навигационное свойство
 }
 
 public class Storage
